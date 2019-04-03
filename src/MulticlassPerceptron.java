@@ -4,12 +4,8 @@ import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.matrix.Matrix;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Random;
-import java.lang.Math.*;
+
 
 public class MulticlassPerceptron implements Classifier{
 
@@ -59,12 +55,13 @@ public class MulticlassPerceptron implements Classifier{
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder();
-        s.append("Source file: " + fileName + "/n");
+        s.append("Source file: " + fileName);
+//        s.append(Environment.NewLine)
         s.append("Training epoch limit : " + maxNumEpochs);
         s.append("actual training epochs : " + layer.actualEpochs);
         s.append("total number weight updates : " + layer.weightUpdates);
 
-        return super.toString();
+        return s.toString();
     }
 
 
@@ -90,7 +87,7 @@ public class MulticlassPerceptron implements Classifier{
 
         public int classify(Matrix input){
             double argMax;
-            int argMaxIndex =0;
+            int argMaxIndex = 0;
 
             Matrix activations = weights.times(input);
             argMax = activations.get(0, 0);
@@ -98,16 +95,16 @@ public class MulticlassPerceptron implements Classifier{
             for(int i = 0; i < length; i ++) {
 
                 if (argMax < activations.get(i, 0)) {
-                    System.out.println(activations.get(i, 0) + " > " + argMax);
                     argMax = activations.get(i, 0);
                     argMaxIndex = i;
                 }
             }
-            System.out.println("argmax index is " + argMaxIndex);
+
             return argMaxIndex;
         }
 
 //      Just tacking on an extra 1 to the end of the instance and making it into a straight array
+
         public Matrix preprocessInstance(Instance in){
 //          Moving the data from the instance into an array with an extra space for the bias input
 //          We're making it of size numAttributes because the class label is stored as an attribute
@@ -127,27 +124,38 @@ public class MulticlassPerceptron implements Classifier{
 
         public void train(Instances instances){
             int classification;
-            boolean noWeightUpdate = true;
+            boolean weightUpdate = false;
             int epoch;
-            for(epoch= 0; epoch < maxEpochs || noWeightUpdate; epoch++) {
-                noWeightUpdate = true;
+
+            for(epoch = 0; epoch < maxEpochs; epoch++) {
+                weightUpdate = false;
                 for (Instance in : instances) {
 
                     classification = classifyInstance(in);
 
                     // If the classification is wrong, then you have to add the input values to the weights of the correct
                     // index and subtract them from the wrong index
-                    if (in.value(in.classIndex()) != classification) {
-                        noWeightUpdate = false;
-                        for (int i = 0; i < in.numAttributes(); i++) {
+//                  // this might be wrong
+                    if (in.classValue() != classification) {
+                        weightUpdate = true;
+                        for (int i = 0; i < in.numAttributes() - 1; i++) {
                             weights.getArray()[classification][i] -= in.value(i);
-                            weights.getArray()[(int) in.value(in.numAttributes() - 1)][i] += in.value(i);
+                            weights.getArray()[(int) in.classValue()][i] += in.value(i);
                         }
+                        weights.getArray()[classification][in.numAttributes() - 1] -= 1;
+                        weights.getArray()[(int) in.classValue()][in.numAttributes() - 1] += 1;
                     }
-                }
-            }
-            actualEpochs = epoch + 1;
 
+
+                }
+                if(weightUpdate == false)
+                    break;
+
+                System.out.printf("\n\n\n");
+            }
+            System.out.println(weightUpdate);
+            actualEpochs = epoch + 1;
+            weights.print(3,3);
             return;
         }
 
