@@ -54,14 +54,13 @@ public class MulticlassPerceptron implements Classifier{
 
     @Override
     public String toString() {
-        StringBuilder s = new StringBuilder();
-        s.append("Source file: " + fileName);
-//        s.append(Environment.NewLine)
-        s.append("Training epoch limit : " + maxNumEpochs);
-        s.append("actual training epochs : " + layer.actualEpochs);
-        s.append("total number weight updates : " + layer.weightUpdates);
-
-        return s.toString();
+        String s = new String();
+        s += ("Source file: " + fileName + "\n");
+        s +=("Training epoch limit : " + maxNumEpochs + "\n");
+        s +=("Actual training epochs : " + layer.actualEpochs + "\n");
+        s +=("Total # weight updates : " + layer.weightUpdates + "\n");
+        s += layer.printWeights();
+        return s;
     }
 
 
@@ -122,6 +121,21 @@ public class MulticlassPerceptron implements Classifier{
             return new Matrix(inputVals, 1).transpose();
         }
 
+        public String printWeights(){
+            String s = "\n\nFinal weights:\n\n";
+            double[][] weightsCopy = weights.getArrayCopy();
+
+            for(int i = 0; i < weightsCopy.length; i++ ){
+                s += String.format("Class %d:", i);
+                for(int j = 0; j < weightsCopy[i].length; j++){
+                    s += String.format("%6.2f ", weightsCopy[i][j]);
+                }
+                s += "\n";
+            }
+            return s;
+        }
+
+
         public void train(Instances instances){
             int classification;
             boolean weightUpdate = false;
@@ -150,12 +164,10 @@ public class MulticlassPerceptron implements Classifier{
                 }
                 if(weightUpdate == false)
                     break;
-
-                System.out.printf("\n\n\n");
             }
-            System.out.println(weightUpdate);
+
             actualEpochs = epoch + 1;
-            weights.print(3,3);
+
             return;
         }
 
