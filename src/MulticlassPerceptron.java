@@ -152,6 +152,7 @@ public class MulticlassPerceptron implements Classifier{
 //                  // this might be wrong
                     if (in.classValue() != classification) {
                         weightUpdate = true;
+                        weightUpdates++;
                         for (int i = 0; i < in.numAttributes() - 1; i++) {
                             weights.getArray()[classification][i] -= in.value(i);
                             weights.getArray()[(int) in.classValue()][i] += in.value(i);
