@@ -1,0 +1,15 @@
+<component name="ArtifactManager">
+  <artifact build-on-make="true" name="WekaProject:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/WekaProject_jar</output-path>
+    <root id="root">
+      <element id="archive" name="WekaProject.jar">
+        <element id="module-output" name="WekaProject" />
+        <element id="module-source" name="WekaProject" />
+      </element>
+      <element id="file-copy" path="$PROJECT_DIR$/simple.arff" />
+      <element id="directory" name="lib">
+        <element id="library" level="project" name="weka" />
+      </element>
+    </root>
+  </artifact>
+</component>
