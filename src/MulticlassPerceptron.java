@@ -6,7 +6,12 @@ import weka.core.matrix.Matrix;
 
 import java.io.IOException;
 
-
+/**
+ * University of Central Florida
+ * CAP4630 Artificial Intelligence - Spring 2019
+ * Multi-Class Vector Perceptron Classifier
+ * Author(s): Yashwant Bhosale and William Cromar
+ */
 public class MulticlassPerceptron implements Classifier{
 
 
@@ -21,6 +26,12 @@ public class MulticlassPerceptron implements Classifier{
 
     @Override
     public void buildClassifier(Instances instances) throws Exception {
+        System.out.println("University of Central Florida");
+        System.out.println("CAP4630 Artificial Intelligence - Spring 2019");
+        System.out.println("Multi-Class Perceptron Classifier");
+        System.out.println("Author(s): Yashwant Bhosale and William Cromar");
+        System.out.println();
+
         layer = new MCP(instances.numClasses(), maxNumEpochs);
         layer.train(instances);
 
@@ -56,7 +67,7 @@ public class MulticlassPerceptron implements Classifier{
     public String toString() {
         String s = new String();
         s += ("Source file: " + fileName + "\n");
-        s +=("Training epoch limit : " + maxNumEpochs + "\n");
+        s +=("Training epoch limit   : " + maxNumEpochs + "\n");
         s +=("Actual training epochs : " + layer.actualEpochs + "\n");
         s +=("Total # weight updates : " + layer.weightUpdates + "\n");
         s += layer.printWeights();
@@ -122,13 +133,13 @@ public class MulticlassPerceptron implements Classifier{
         }
 
         public String printWeights(){
-            String s = "\n\nFinal weights:\n\n";
+            String s = "\nFinal weights:\n\n";
             double[][] weightsCopy = weights.getArrayCopy();
 
             for(int i = 0; i < weightsCopy.length; i++ ){
-                s += String.format("Class %d:", i);
+                s += String.format("Class %d: ", i);
                 for(int j = 0; j < weightsCopy[i].length; j++){
-                    s += String.format("%6.2f ", weightsCopy[i][j]);
+                    s += String.format("%7.3f ", weightsCopy[i][j]);
                 }
                 s += "\n";
             }
@@ -142,6 +153,11 @@ public class MulticlassPerceptron implements Classifier{
             int epoch;
 
             for(epoch = 0; epoch < maxEpochs; epoch++) {
+                System.out.printf("Epoch   %d ", epoch);
+
+                StringBuilder sb = new StringBuilder();
+                int cnt = 0;
+
                 weightUpdate = false;
                 for (Instance in : instances) {
 
@@ -151,6 +167,9 @@ public class MulticlassPerceptron implements Classifier{
                     // index and subtract them from the wrong index
 //                  // this might be wrong
                     if (in.classValue() != classification) {
+                        sb.append("0");
+                        cnt++;
+
                         weightUpdate = true;
                         weightUpdates++;
                         for (int i = 0; i < in.numAttributes() - 1; i++) {
@@ -159,10 +178,14 @@ public class MulticlassPerceptron implements Classifier{
                         }
                         weights.getArray()[classification][in.numAttributes() - 1] -= 1;
                         weights.getArray()[(int) in.classValue()][in.numAttributes() - 1] += 1;
+                    } else {
+                        sb.append("1");
                     }
-
-
                 }
+
+                System.out.printf("[%2d] ", cnt);
+                System.out.println(sb);
+
                 if(weightUpdate == false)
                     break;
             }
